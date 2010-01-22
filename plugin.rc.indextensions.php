@@ -10,32 +10,29 @@
 *
 **/
 
-/**
- *
- *
- *
- *
- *
- * Theme Methods
- *
- * These plugin methods are to be used within theme templates
- * @package ThemeMethods
- *
- *
- *
- *
- *
- *
- *
- */
- 
-/*** Menu Style Types */
+/** @name Index Menu Styles 
+ *  Styles for formating the a website index <plug:rcPageIndex style />
+ *	@see rcPageIndex
+*/
+//@{
 define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT', 				'rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT');
 define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS', 	'rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS');
 define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED', 	'rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED');
 define ('rcSTYLE_INVISIBLE_TITLES', 						'	rcSTYLE_INVISIBLE_TITLES');
 define ('rcSTYLE_INDEXHIBIT_SECTIONAL',							'rcSTYLE_INDEXHIBIT_SECTIONAL');
 define ('rcSTYLE_NO_MENU',									'rcSTYLE_NO_MENU');
+
+//@}
+
+
+/**
+ * @name Theme Plugins
+ * 
+ * Plugins to be used in Theme Templates
+ *
+ * @{
+*/ 
+
 
 /** 
 * Returns the index menu in a chosen style
@@ -83,7 +80,6 @@ function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT) {
 	
 	return $html;
 }
- 
 
 /** 
 * Adds noscriptcontent 
@@ -170,37 +166,17 @@ function rcJSDocReady() {
 	return $incs;
 }
 
+//@}
 
+/**
+ * @name Anywhere Plugins
+ * 
+ * Plugins that should work anywhere. E.g., in Exhibition Formats 
+ *
+ * @{
+*/
 
 /** 
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- * Anywhere Methods
- *
- * These plugins should work anywhere. E.G. in exhibits
- * @package AnywhereMethods
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
- /** 
 * Splits a string on a character and add emphasise to the second part
 * e.g. 	"The Client - The Project"
 *		will return
@@ -210,19 +186,8 @@ function rcJSDocReady() {
 *
 * @param 	string 	text 		text to be split and emphasised
 * @param 	string 	split 		the character to split the text on
-
-function rcEmphasisSplit($text, $split = "-") {
-
-	//$count = 1;
-	//do the split
-	//$newText = str_replace($split, "<em>", $text, $count);
-	
-	//return "fish and chips";
-	//return $newText;
-	
-	//see if it has done anything and add </em> to it if it has
-	//return ($newText == $text) ? $text : $text."</em>";
-}*/
+*
+*/
 
 function rcEmphasisSplit($text, $split = "-") {
 	//do the split
@@ -356,37 +321,16 @@ function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
 	return "<span style='height: $spanHeight"."px; width:100%; display:block'> </span>";
 }
 
+
+//@}
+
+
+
 /**
+ * @name Private Functions
  *
- *
- *
- *
- *
- *
- *
- *
- *
- * Private Functions
- *
- * @package Private Functions
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
- 
-
-
-/** 
-* Styles
+ * @{
 */
-
-
 
 /** 
 * _menuStyle_SectionTitleReplacedBy
@@ -444,13 +388,10 @@ function _makePagesIntoMenuListItems($out, $s) {
 }
 
 /** 
-* Pulls the naviagtion out of the DB
-*/
-
-/** 
 * _getNavigationFromDB
+* Pulls the navigation out of the DB
 *
-* @param 	bool	showUnpublished			will also fetch unpublished results
+* @param 	bool	showUnpublished			also fetch unpublished results
 */
 function _getNavigationFromDB($showUnpublished = false) {
 
@@ -484,4 +425,6 @@ function _getNavigationFromDB($showUnpublished = false) {
 	
 	return $order;
 }
+
+//@}
  
