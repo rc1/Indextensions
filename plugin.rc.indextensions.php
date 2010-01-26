@@ -10,6 +10,16 @@
 *
 **/
 
+/**
+*	Display the page title, using rcEmphasisSplit
+*	In theme templates plugin seems to work when passing varibles with commsa
+*	@see rcEmphasisSplit
+*/
+function rcPageTitleWithEmpasisSplit() {
+	global $rs;
+	return rcEmphasisSplit($rs['title'], "-");
+}
+
 /** @name Index Menu Styles 
  *  Styles for formating the a website index <plug:rcPageIndex style />
  *	@see rcPageIndex
