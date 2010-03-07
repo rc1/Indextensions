@@ -5,7 +5,7 @@
 * 
 * @copyright RossCairns.com 
 * @author Ross Cairns 
-* @version v0.1
+* @version v0.2
 * @package com.rosscairns.indextensions
 *
 **/
@@ -42,6 +42,18 @@ define ('rcSTYLE_NO_MENU',									'rcSTYLE_NO_MENU');
  *
  * @{
 */ 
+
+/**
+*	Runs indexhibits plugins parser on the text
+*	Allows plugins to be run in custom exhbits. Useful for setting varibles in the text.
+*	Means that plugins could run twice
+*/
+function rcRunPluginsParser($text) {
+	$PARSER =& load_class('parse', TRUE, 'lib');
+	$PARSER->parser($text);
+
+}
+
 
 
 /** 
