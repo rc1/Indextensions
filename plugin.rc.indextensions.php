@@ -2,13 +2,52 @@
 
 /** 
 * RossCairns.com indexhibit extensions
-* 
 * @copyright RossCairns.com 
 * @author Ross Cairns 
-* @version v0.2
+* @version v0.3
 * @package com.rosscairns.indextensions
 *
 **/
+
+/** @name Index Menu Styles 
+ *  Styles for formating the a website index <plug:rcPageIndex style />
+ *	@see rcPageIndex
+*/
+//@{
+define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT', 				'rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT');
+define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS', 	'rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS');
+define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED', 	'rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED');
+define ('rcSTYLE_INVISIBLE_TITLES', 							'rcSTYLE_INVISIBLE_TITLES');
+define ('rcSTYLE_INDEXHIBIT_SECTIONAL',							'rcSTYLE_INDEXHIBIT_SECTIONAL');
+define ('rcSTYLE_NO_MENU',										'rcSTYLE_NO_MENU');
+//@}
+
+/** @name Menu Section Selection  
+ *  Defines whether supplied section title arrays should be used to exclude items or include
+ *	Example usages: Splitting menu's into two columns.
+ *	@see rcPageIndexIncludingAndExluding
+*/
+//@{
+define ('rcINCLUDE', 	'rcINCLUDE');
+define ('rcEXCLUDE', 	'rcEXCLUDE');
+//@}
+
+
+/*****************************************
+ * @name Theme Plugins
+ * Plugins to be used in Theme Templates
+ * @{
+*****************************************/ 
+
+/**
+*	Runs indexhibits plugins parser on the text
+*	Allows plugins to be run in custom exhbits. Useful for setting varibles in the text.
+*	Means that plugins could run twice
+*/
+function rcRunPluginsParser($text) {
+	$PARSER =& load_class('parse', TRUE, 'lib');
+	$PARSER->parser($text);
+}
 
 /**
 *	Display the page title, using rcEmphasisSplit
@@ -20,50 +59,16 @@ function rcPageTitleWithEmpasisSplit() {
 	return rcEmphasisSplit($rs['title'], "-");
 }
 
-/** @name Index Menu Styles 
- *  Styles for formating the a website index <plug:rcPageIndex style />
- *	@see rcPageIndex
-*/
-//@{
-define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT', 				'rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT');
-define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS', 	'rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS');
-define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED', 	'rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED');
-define ('rcSTYLE_INVISIBLE_TITLES', 						'	rcSTYLE_INVISIBLE_TITLES');
-define ('rcSTYLE_INDEXHIBIT_SECTIONAL',							'rcSTYLE_INDEXHIBIT_SECTIONAL');
-define ('rcSTYLE_NO_MENU',									'rcSTYLE_NO_MENU');
-
-//@}
-
-
-/**
- * @name Theme Plugins
- * 
- * Plugins to be used in Theme Templates
- *
- * @{
-*/ 
-
-/**
-*	Runs indexhibits plugins parser on the text
-*	Allows plugins to be run in custom exhbits. Useful for setting varibles in the text.
-*	Means that plugins could run twice
-*/
-function rcRunPluginsParser($text) {
-	$PARSER =& load_class('parse', TRUE, 'lib');
-	$PARSER->parser($text);
-
-}
-
-
-
 /** 
-* Returns the index menu in a chosen style
+* Returns the index menu in a chosen style.
+* Has the optional to include or exlude specificed section titles but adding them to the $sectionTitlesArray. by default titles in here will be included.
 * Usage: <plug:rcPageIndex rcSTYLE_INDEXHIBIT_SECTIONAL />
-* @param 	string 	style 		The style to format the menu 
-* 
-*
+* @param 	string 	$style 					The style to format the menu 
+* @param	array	$sectionTitlesArray		Optional: Menu titles to be used to either include or exclude selections. If "" will ignore everything and include everything as normal. @see rcPageIndex
+* @param	string	$selectionMode			Optional: Either rcINCLUDE or rcEXCLUDE	
 */
-function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT) {
+function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTitlesArray = array(), $selectionMode = rcEXCLUDE) {
+
 	// format based on style
 	switch($style) {
 		case rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED:
@@ -106,8 +111,7 @@ function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT) {
 /** 
 * Adds noscriptcontent 
 * Usage: <plug:rcCSSIncludes />
-* Note: css files can be added to plug using rcCSSIncludes_Add() helper function
-*
+* @note css files can be added to plug using rcCSSIncludes_Add() helper function
 */
 function rcNoScript() {
 	// get our instance
@@ -127,8 +131,7 @@ function rcNoScript() {
 /** 
 * Adds links to css files
 * Usage: <plug:rcCSSIncludes />
-* Note: css files can be added to plug using rcCSSIncludes_Add() helper function
-*
+* @note css files can be added to plug using rcCSSIncludes_Add() helper function
 */
 function rcCSSIncludes() {
 	// get our instance
@@ -149,8 +152,7 @@ function rcCSSIncludes() {
 /** 
 * Adds links to js files
 * Usage: <plug:rcJSIncludes />
-* Note: js files can be added to plug using rcJSIncludes_Add() helper function
-*
+* @note js files can be added to plug using rcJSIncludes_Add() helper function
 */
 function rcJSIncludes() {
 	// get our instance
@@ -170,8 +172,7 @@ function rcJSIncludes() {
 /** 
 * Adds JS to the Document Ready JS in the HTML head
 * Usage: <plug:rcJSDocReady />
-* Note: js can be added to plug using rcJSDocReady_Add() helper function
-*
+* @note js can be added to plug using rcJSDocReady_Add() helper function
 */
 function rcJSDocReady() {
 	// get our instance
@@ -190,13 +191,12 @@ function rcJSDocReady() {
 
 //@}
 
-/**
+/******************************************
  * @name Anywhere Plugins
- * 
- * Plugins that should work anywhere. E.g., in Exhibition Formats 
- *
+ * Plugins that should work anywhere. 
+ * e.g. in exhibition Formats 
  * @{
-*/
+*******************************************/
 
 /** 
 * Splits a string on a character and add emphasise to the second part
@@ -208,7 +208,6 @@ function rcJSDocReady() {
 *
 * @param 	string 	text 		text to be split and emphasised
 * @param 	string 	split 		the character to split the text on
-*
 */
 
 function rcEmphasisSplit($text, $split = "-") {
@@ -253,7 +252,6 @@ function rcCSSIncludes_Add($dir, $filename, $mediaOrNil = "", $typeOrNil = "") {
 
 /** 
 * Helper function to add JS files to the rcJSIncludes plugin
-*
 * @param 	string 	dir 		Directory to load the js file from e.g. /web/js/
 * @param	string	filename	JS file to load e.g. reset.js
 */
@@ -274,7 +272,6 @@ function rcJSIncludes_Add($dir, $filename) {
 
 /** 
 * Helper function to add Document Ready JS to the rcJSDocReady plugin
-*
 * @param	string	js			the js
 */
 function rcJSDocReady_Add($js) {
@@ -291,7 +288,6 @@ function rcJSDocReady_Add($js) {
 
 /** 
 * Helper function to add content that will be all contained within a <noscript> tag
-*
 * @param	string	content			the content to be placed 
 */
 function rcNoScript_Add($content) {
@@ -309,7 +305,6 @@ function rcNoScript_Add($content) {
 
 /** 
 * Disables Indexhibit so nothing is shown
-*
 * @param 	string 	shouldDo 	TRUE or YES will disable the page
 */
 function rcDisablePage($shouldDo) {
@@ -320,8 +315,6 @@ function rcDisablePage($shouldDo) {
 * Strings HTML tags from a string
 * when used in a template with system template var it can be used below (forgetting the closing >)
 * <plug:rcStripHTML <%title%>
-*	
-*
 * @param 	string 	str 	String to strip
 */
 function rcStripHTML($str) {
@@ -330,8 +323,6 @@ function rcStripHTML($str) {
 
 /** 
 * An <span> html element with the hight of a number of lines
-*	
-*
 * @param 	int 	numberOfLines 	Number of the span shall span
 * @param 	int 	lineHeight 		Height of each line in pixels
 * @param 	int 	paddingBottom 	Padding at the bottom of the span
@@ -343,20 +334,17 @@ function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
 	return "<span style='height: $spanHeight"."px; width:100%; display:block'> </span>";
 }
 
-
 //@}
 
 
 
-/**
+/******************************************
  * @name Private Functions
- *
  * @{
-*/
+*******************************************/
 
 /** 
 * _menuStyle_SectionTitleReplacedBy
-*
 * @param 			items					array from the db (_getNavigationFromDB)
 * @param 	string 	replacement				Section title will display this string instead of the section title
 * @param 	bool 	firstSelectionTitle 	if False will skip using the first title
@@ -414,7 +402,6 @@ function _makePagesIntoMenuListItems($out, $s) {
 /** 
 * _getNavigationFromDB
 * Pulls the navigation out of the DB
-*
 * @param 	bool	showUnpublished			also fetch unpublished results
 */
 function _getNavigationFromDB($showUnpublished = false) {
