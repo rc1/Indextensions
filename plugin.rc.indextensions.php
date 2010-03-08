@@ -10,7 +10,7 @@
 **/
 
 /** @name Index Menu Styles 
-* Styles for formating the a website index <plug:rcPageIndex style />
+* Styles for formating the website index <plug:rcPageIndex style />
 * @see rcPageIndex
 */
 //@{
@@ -23,9 +23,8 @@ define ('rcSTYLE_NO_MENU',										'rcSTYLE_NO_MENU');
 //@}
 
 /** @name Menu Section Selection  
- *  Defines whether supplied section title arrays should be used to exclude items or include
+ *  Defines whether supplied section title should be included or excluded from a menu
  *	Example usages: Splitting menu's into two columns.
- *	@see rcPageIndexIncludingAndExluding
 */
 //@{
 define ('rcINCLUDE', 	'rcINCLUDE_ONLY');
@@ -40,23 +39,13 @@ define ('rcEXCLUDE', 	'rcEXCLUDE');
 *****************************************/ 
 
 /**
-*	Runs indexhibits plugins parser on the text
-*	Allows plugins to be run in custom exhbits. Useful for setting varibles in the text.
-*	Means that plugins could run twice
+*	Runs indexhibits plugins parser on the supplied text
+*	Allows plugins to be run in custom exhbits. Useful for setting global variables from with the textarea of an exhiibit.
+*	@note Plugin's may run twice if they will later be processed. E.g. if they are within the textarea of an exhiibit.
 */
 function rcRunPluginsParser($text) {
 	$PARSER =& load_class('parse', TRUE, 'lib');
 	$PARSER->parser($text);
-}
-
-/**
-*	Display the page title, using rcEmphasisSplit
-*	In theme templates plugin seems to work when passing varibles with commsa
-*	@see rcEmphasisSplit
-*/
-function rcPageTitleWithEmpasisSplit() {
-	global $rs;
-	return rcEmphasisSplit($rs['title'], "-");
 }
 
 /** 
@@ -192,7 +181,48 @@ function rcJSDocReady() {
 	return $incs;
 }
 
+/** 
+* Strings HTML tags from a string
+* when used in a template with system template var it can be used below (don't use the closing >)
+* <plug:rcStripHTML <%title%>
+* @param 	string 	str 	String to strip
+*/
+function rcStripHTML($str) {
+	return strip_tags($str);
+}
+
 //@}
+
+/******************************************
+ * @name Exhibit Textarea Plugins
+ * Plugins that are for using in the textarea
+ * of an exhibit in the indexhibit admin area
+ * @{
+*******************************************/
+
+/** 
+* Disables Indexhibit so nothing is shown
+* @param 	string 	shouldDo 	TRUE or YES will disable the page
+* @notes	can be used in an exhibits textarea to disable a website. For example place in the contexts page textarea to disable the website which content changes are happening 
+*/
+function rcDisablePage($shouldDo) {
+	if(strncasecmp ($shouldDo, "t", 1) == 0 || strncasecmp ($shouldDo, "y", 1) == 0) exit;
+}
+
+/** 
+* An <span> html element with the hight of a number of lines
+* @param 	int 	numberOfLines 	Number of the span shall span
+* @param 	int 	lineHeight 		Height of each line in pixels
+* @param 	int 	paddingBottom 	Padding at the bottom of the span
+*/
+function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
+	$spanHeight = $lineHeight * $numberOfLines;
+	$spanHeight += $paddingBottom;
+	
+	return "<span style='height: $spanHeight"."px; width:100%; display:block'> </span>";
+}
+
+// @}
 
 /******************************************
  * @name Anywhere Plugins
@@ -207,7 +237,7 @@ function rcJSDocReady() {
 *		will return
 *		"The Client <em>The Project</em>"
 * can be used to use emphasis on project titles
-* the split character will be used in the url still
+* the split character will be used in the url
 *
 * @param 	string 	text 		text to be split and emphasised
 * @param 	string 	split 		the character to split the text on
@@ -221,11 +251,16 @@ function rcEmphasisSplit($text, $split = "-") {
 		return $text;
 	else 
 		return $newText."</em>";
-	//return "fish and chips";
-	//return $newText;
-	
-	//see if it has done anything and add </em> to it if it has
-	//
+}
+
+/**
+*	Display the page title, using rcEmphasisSplit
+*	In theme templates plugin seems to work when passing varibles with commsa
+*	@see rcEmphasisSplit
+*/
+function rcPageTitleWithEmphasisSplit() {
+	global $rs;
+	return rcEmphasisSplit($rs['title'], "-");
 }
 
 /** 
@@ -235,6 +270,8 @@ function rcEmphasisSplit($text, $split = "-") {
 * @param	string	filename	CSS file to load e.g. reset.css
 * @param	string	mediaOrNil	optional CSS media. Screen etc.
 * @param	string	typeOrNil	optional CSS type. text/css etc.
+* 
+* @note this can be used to include difference css files from a exhibit type
 */
 function rcCSSIncludes_Add($dir, $filename, $mediaOrNil = "", $typeOrNil = "") {
 	// get our instance
@@ -305,38 +342,6 @@ function rcNoScript_Add($content) {
 	array_push($OBJ->rcNoScript, $content);
 }
 
-
-/** 
-* Disables Indexhibit so nothing is shown
-* @param 	string 	shouldDo 	TRUE or YES will disable the page
-*/
-function rcDisablePage($shouldDo) {
-	if(strncasecmp ($shouldDo, "t", 1) == 0 || strncasecmp ($shouldDo, "y", 1) == 0) exit;
-}
-
-/** 
-* Strings HTML tags from a string
-* when used in a template with system template var it can be used below (forgetting the closing >)
-* <plug:rcStripHTML <%title%>
-* @param 	string 	str 	String to strip
-*/
-function rcStripHTML($str) {
-	return strip_tags($str);
-}
-
-/** 
-* An <span> html element with the hight of a number of lines
-* @param 	int 	numberOfLines 	Number of the span shall span
-* @param 	int 	lineHeight 		Height of each line in pixels
-* @param 	int 	paddingBottom 	Padding at the bottom of the span
-*/
-function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
-	$spanHeight = $lineHeight * $numberOfLines;
-	$spanHeight += $paddingBottom;
-	
-	return "<span style='height: $spanHeight"."px; width:100%; display:block'> </span>";
-}
-
 //@}
 
 
@@ -399,7 +404,8 @@ function _makePagesIntoMenuListItems($out, $s) {
 * _getNavigationFromDB
 * Pulls the navigation out of the DB
 * @param 	bool	showUnpublished			also fetch unpublished results
-*  @param	array	$sectionTitlesArray		Optional: Menu titles to be used to either include or exclude selections. If "" will ignore everything and include everything as normal. @see rcPageIndex
+* @param	array	$sectionTitlesArray		Optional: Menu titles to be used to either include or exclude selections. 
+*											If "" will ignore everything and include everything as normal. @see rcPageIndex
 * @param	string	$selectionMode			Optional: Either rcINCLUDE or rcEXCLUDE	
 */
 function _getNavigationFromDB($sectionTitlesArray = array(), $selectionMode = rcEXCLUDE, $showUnpublished = false) {
