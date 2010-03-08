@@ -391,6 +391,8 @@ function _menuStyle_Indexhibit_Sectional($items) {
 		if ($out[0]['disp'] == 1) $s .= "<li class='section-title'>" . $key . "</li>\n";
 		
 		$s = _makePagesIntoMenuListItems($out, $s);
+		
+		$s .= "</ul>\n\n";
 	}
 	return $s;
 }
