@@ -10,8 +10,8 @@
 **/
 
 /** @name Index Menu Styles 
- *  Styles for formating the a website index <plug:rcPageIndex style />
- *	@see rcPageIndex
+* Styles for formating the a website index <plug:rcPageIndex style />
+* @see rcPageIndex
 */
 //@{
 define ('rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT', 				'rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT');
@@ -28,7 +28,7 @@ define ('rcSTYLE_NO_MENU',										'rcSTYLE_NO_MENU');
  *	@see rcPageIndexIncludingAndExluding
 */
 //@{
-define ('rcINCLUDE', 	'rcINCLUDE');
+define ('rcINCLUDE', 	'rcINCLUDE_ONLY');
 define ('rcEXCLUDE', 	'rcEXCLUDE');
 //@}
 
@@ -61,19 +61,22 @@ function rcPageTitleWithEmpasisSplit() {
 
 /** 
 * Returns the index menu in a chosen style.
-* Has the optional to include or exlude specificed section titles but adding them to the $sectionTitlesArray. by default titles in here will be included.
+* Has the optional to include only or exlude specificed section titles but adding them to the $sectionTitlesArray. by default titles in here will be included. this allows for different menus to be created by still allowing one menu to be dynamic.
 * Usage: <plug:rcPageIndex rcSTYLE_INDEXHIBIT_SECTIONAL />
 * @param 	string 	$style 					The style to format the menu 
-* @param	array	$sectionTitlesArray		Optional: Menu titles to be used to either include or exclude selections. If "" will ignore everything and include everything as normal. @see rcPageIndex
-* @param	string	$selectionMode			Optional: Either rcINCLUDE or rcEXCLUDE	
+* @param	string	$sectionTitles			Optional: Menu titles (seperated by | ) to be used to either include or exclude selections. If "" will ignore everything and include everything as normal. @see rcPageIndex
+* @param	string	$selectionMode			Optional: Either rcINCLUDE_ONLY or rcEXCLUDE	
+* @note		usage <plug:rcPageIndex rcSTYLE_INDEXHIBIT_SECTIONAL,Information|pizza,rcEXCLUDE />
 */
-function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTitlesArray = array(), $selectionMode = rcEXCLUDE) {
+function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTitles = "", $selectionMode = rcEXCLUDE) {
+	
+	$sectionTitlesArray = explode("|", $sectionTitles);
 
 	// format based on style
 	switch($style) {
 		case rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED:
 			// format each page title to have emphasis
-			$index = _getNavigationFromDB(true);
+			$index = _getNavigationFromDB($sectionTitlesArray, $selectionMode, true);
 			foreach ($index as &$section) {
 				foreach($section as &$page) {
 					$page['title'] = rcEmphasisSplit($page['title']);
@@ -83,7 +86,7 @@ function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTit
 		break;
 		case rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS:
 			// format each page title to have emphasis
-			$index = _getNavigationFromDB();
+			$index = _getNavigationFromDB($sectionTitlesArray, $selectionMode);
 			foreach ($index as &$section) {
 				foreach($section as &$page) {
 					$page['title'] = rcEmphasisSplit($page['title']);
@@ -92,13 +95,13 @@ function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTit
 			$html = _menuStyle_SectionTitleReplacedBy($index, '&mdash;', false);
 		break;
 		case rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT:
-			$html = _menuStyle_SectionTitleReplacedBy(_getNavigationFromDB(), '&mdash;', false);
+			$html = _menuStyle_SectionTitleReplacedBy(_getNavigationFromDB($sectionTitlesArray, $selectionMode), '&mdash;', false);
 		break;
 		case rcSTYLE_INVISIBLE_TITLES:
-			$html = _menuStyle_SectionTitleReplacedBy(_getNavigationFromDB(), '');
+			$html = _menuStyle_SectionTitleReplacedBy(_getNavigationFromDB($sectionTitlesArray, $selectionMode), '');
 		break;
 		case rcSTYLE_INDEXHIBIT_SECTIONAL:
-			$html = _menuStyle_Indexhibit_Sectional(_getNavigationFromDB());
+			$html = _menuStyle_Indexhibit_Sectional(_getNavigationFromDB($sectionTitlesArray, $selectionMode));
 		break;
 		case rcSTYLE_NO_MENU:
 			$html = "";
@@ -357,14 +360,11 @@ function _menuStyle_SectionTitleReplacedBy($items, $replacement = "", $firstSele
 	foreach($items as $key => $out)
 	{
 		$s .= "<ul>\n";
-		
 		if ($firstSelectionTitle > 0) {
 			if ($out[0]['disp'] == 1) $s .= "<li class='section-title'>$replacement</li>\n";
 		}
 		$firstSelectionTitle++;
-			
 		$s = _makePagesIntoMenuListItems($out, $s);
-		
 		$s .= "</ul>\n\n";
 	}
 	return $s;
@@ -375,11 +375,8 @@ function _menuStyle_Indexhibit_Sectional($items) {
 	foreach($items as $key => $out)
 	{
 		$s .= "<ul>\n";
-		
 		if ($out[0]['disp'] == 1) $s .= "<li class='section-title'>" . $key . "</li>\n";
-		
 		$s = _makePagesIntoMenuListItems($out, $s);
-		
 		$s .= "</ul>\n\n";
 	}
 	return $s;
@@ -389,7 +386,6 @@ function _makePagesIntoMenuListItems($out, $s) {
 		foreach($out as $page)
 		{
 			$active = ($rs['id'] == $page['id']) ? " class='active'" : '';
-			
 			if (isset($page['status']) && $page['status'] == 0) 
 				$s .= "<li class='unpublished'>" . $page['title'] . "</li>\n";
 			else
@@ -403,8 +399,10 @@ function _makePagesIntoMenuListItems($out, $s) {
 * _getNavigationFromDB
 * Pulls the navigation out of the DB
 * @param 	bool	showUnpublished			also fetch unpublished results
+*  @param	array	$sectionTitlesArray		Optional: Menu titles to be used to either include or exclude selections. If "" will ignore everything and include everything as normal. @see rcPageIndex
+* @param	string	$selectionMode			Optional: Either rcINCLUDE or rcEXCLUDE	
 */
-function _getNavigationFromDB($showUnpublished = false) {
+function _getNavigationFromDB($sectionTitlesArray = array(), $selectionMode = rcEXCLUDE, $showUnpublished = false) {
 
 	$OBJ =& get_instance();
 	global $rs;
@@ -424,14 +422,24 @@ function _getNavigationFromDB($showUnpublished = false) {
 	
 	foreach($pages as $reord)
 	{
-		$order[$reord['sec_desc']][] = array(
-			'id' => $reord['id'],
-			'title' => $reord['title'],
-			'url' => $reord['url'],
-			'year' => $reord['year'],
-			'secid' => $reord['secid'],
-			'disp' => $reord['sec_disp'],
-			'status' => $reord['status']);
+		// figure out if we should include or exclude this item
+		$includeItem = ($selectionMode == rcEXCLUDE) ? true : false; 
+		foreach($sectionTitlesArray as &$title) {
+			if ($reord['sec_desc'] == $title) {
+				$includeItem = !$includeItem;
+			}
+		}
+		
+		if ($includeItem == true) {
+			$order[$reord['sec_desc']][] = array(
+				'id' => $reord['id'],
+				'title' => $reord['title'],
+				'url' => $reord['url'],
+				'year' => $reord['year'],
+				'secid' => $reord['secid'],
+				'disp' => $reord['sec_disp'],
+				'status' => $reord['status']);
+		}
 	}
 	
 	return $order;
