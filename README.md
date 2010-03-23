@@ -8,7 +8,6 @@
 
 Rough around the edges but hey, in the sprit of sharing, here it is. With a dollop of documentation too.
 
-
-### Usage ===
+### Usage
 
 1st clue is to drop `plugin.rc.indextensions.php` into your `ndxz-studio/site/plugin/` folder. And then...
