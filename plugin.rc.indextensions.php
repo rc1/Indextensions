@@ -36,7 +36,8 @@ define ('rcEXCLUDE', 	'rcEXCLUDE');
  * @name Theme Plugins
  * Plugins to be used in Theme Templates
  * @{
-*****************************************/ 
+*****************************************/
+
 
 /**
 *	Runs indexhibits plugins parser on the supplied text
@@ -48,15 +49,6 @@ function rcRunPluginsParser($text) {
 	$PARSER->parser($text);
 }
 
-/** 
-* Returns the index menu in a chosen style.
-* Has the optional to include only or exlude specificed section titles but adding them to the $sectionTitlesArray. by default titles in here will be included. this allows for different menus to be created by still allowing one menu to be dynamic.
-* Usage: <plug:rcPageIndex rcSTYLE_INDEXHIBIT_SECTIONAL />
-* @param 	string 	$style 					The style to format the menu 
-* @param	string	$sectionTitles			Optional: Menu titles (seperated by | ) to be used to either include or exclude selections. If "" will ignore everything and include everything as normal. @see rcPageIndex
-* @param	string	$selectionMode			Optional: Either rcINCLUDE_ONLY or rcEXCLUDE	
-* @note		usage <plug:rcPageIndex rcSTYLE_INDEXHIBIT_SECTIONAL,Information|pizza,rcEXCLUDE />
-*/
 function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTitles = "", $selectionMode = rcEXCLUDE) {
 	
 	$sectionTitlesArray = explode("|", $sectionTitles);
@@ -230,6 +222,43 @@ function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
  * e.g. in exhibition Formats 
  * @{
 *******************************************/
+
+/** 
+* Markdown Plugin
+* 
+* @param 	String 	$text 	text to be marked down
+*
+* @return	String	HTML
+*
+* @attention requires a plugin.markdown.php file* from http://michelf.com/projects/php-markdown/  
+*			*rename markdown.php to plugin.markdown.php
+*	
+*/
+function rcMarkdown($text) {
+	if(!defined('YII_DEBUG'))  {
+		return "Error: Makrdown plugin failed. Markdown plugin not loaded.";
+	}
+	
+	return Markdown($text);
+}
+
+/** 
+* Proccesses Markdown Text
+* 
+* @remarks	Use in theme template index.php before <plug:front_exhibit />
+*
+*			e.g.
+*			/code
+*			<plug:rcMarkdownContent />
+* 			<plug:front_exhibit /> 
+*			/endcode
+*/
+function rcMarkdownContent() {
+	global $rs;
+	
+	$rs['content'] =  rcMarkdown($rs['content']);
+}
+
 
 /** 
 * Splits a string on a character and add emphasise to the second part
