@@ -6,7 +6,7 @@
 
 ### The Plugins
 
-Rough around the edges but hey, in the sprit of sharing, here it is. With a dollop of documentation too.
+Rough around the edges but hey, in the sprit of sharing, here it is. With a dollop of documentation too. Outdate docs online [here](http://rc1.bitbucket.org/indextensions/) 
 
 ### Usage
 
