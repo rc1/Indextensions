@@ -183,6 +183,29 @@ function rcStripHTML($str) {
 	return strip_tags($str);
 }
 
+/** 
+* Extends <plug:front_exhibit /> for adding more functionality. Like markdown text if enabled
+*/
+function rcFront_exhibit() {
+	global $rs, $PARSE;
+	 
+	$OBJ =& get_instance();
+	$content = $OBJ->front->front_exhibit();
+	
+	// Markdown Parsing
+	if($rs['markdown']) {
+		// emulate the parser to 
+		$content = $PARSE->parser($PARSE->doVariables($content));
+		$content = $PARSE->parser($PARSE->doVariables($content));
+		
+		$content = rcMarkdown($content);
+	}
+		
+		
+		
+	return $content;
+}
+
 //@}
 
 /******************************************
@@ -191,6 +214,44 @@ function rcStripHTML($str) {
  * of an exhibit in the indexhibit admin area
  * @{
 *******************************************/
+
+/** 
+* Image
+* @param	string	$title 	create an html img image tag for an image in the exhibit if it's image matches $title
+*/
+function image($title) {
+	global $rs;
+	// get our instance
+	$OBJ =& get_instance();
+	
+	// see if the images have been pulled from the database already
+	if (!isset($OBJ->rcImages)) {
+		//images not loaded so load them
+		$pages = $OBJ->db->fetchArray("SELECT * 
+		FROM ".PX."media, ".PX."objects_prefs, ".PX."objects  
+		WHERE media_ref_id = '$rs[id]' 
+		AND obj_ref_type = 'exhibit' 
+		AND obj_ref_type = media_obj_type 
+		AND id = '$rs[id]' 
+		ORDER BY media_order ASC, media_id ASC");
+		
+		$images;
+		foreach($pages as &$image) {
+			$images[$image['media_title']] = $image['media_file'];
+		}
+		$OBJ->rcImages = $images;
+	}
+	
+	// see if there is an image matching the title
+	if (!$OBJ->rcImages[$title])
+		return;
+		
+	// build tag
+	$tag = "<div class='image'><img src='".GIMGS.'/'.$OBJ->rcImages[$title]."' /></div>";
+	
+
+	return $tag;;
+}
 
 /** 
 * Disables Indexhibit so nothing is shown
@@ -235,11 +296,25 @@ function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
 *	
 */
 function rcMarkdown($text) {
-	if(!defined('YII_DEBUG'))  {
+	if(!defined('MARKDOWN_VERSION'))  {
 		return "Error: Makrdown plugin failed. Markdown plugin not loaded.";
 	}
 	
 	return Markdown($text);
+}
+
+function rcExhibitMarkdown () {
+
+	global $rs;
+	global $PARSE;
+	
+	// emulate the parser
+	$output = $PARSE->parser($PARSE->doVariables($rs['content']));
+	$output = $PARSE->parser($PARSE->doVariables($output));
+		
+	$output = preg_replace('|<\?[php]?(.)*\?>|sUi','',$output);
+	return $output;
+	//return rcMarkdown($output);
 }
 
 /** 
@@ -255,7 +330,6 @@ function rcMarkdown($text) {
 */
 function rcMarkdownContent() {
 	global $rs;
-	
 	$rs['content'] =  rcMarkdown($rs['content']);
 }
 
