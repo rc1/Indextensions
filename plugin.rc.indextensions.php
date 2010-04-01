@@ -41,48 +41,64 @@ define ('rcEXCLUDE', 	'rcEXCLUDE');
 
 /**
 *	Runs indexhibits plugins parser on the supplied text
-*	Allows plugins to be run in custom exhbits. Useful for setting global variables from with the textarea of an exhiibit.
-*	@note Plugin's may run twice if they will later be processed. E.g. if they are within the textarea of an exhiibit.
+*	Allows plugins to be run in custom exhbits. Useful for setting 
+global variables from with the textarea of an exhiibit.
+*	@note Plugin's may run twice if they will later be processed. 
+E.g. if they are within the textarea of an exhiibit.
 */
 function rcRunPluginsParser($text) {
 	$PARSER =& load_class('parse', TRUE, 'lib');
 	$PARSER->parser($text);
 }
 
-function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTitles = "", $selectionMode = rcEXCLUDE) {
+function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, 
+$sectionTitles = "", $selectionMode = rcEXCLUDE) {
 	
 	$sectionTitlesArray = explode("|", $sectionTitles);
 
 	// format based on style
 	switch($style) {
-		case rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED:
+		case 
+rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS_SHOW_UNPUBLISHED:
 			// format each page title to have emphasis
-			$index = _getNavigationFromDB($sectionTitlesArray, $selectionMode, true);
+			$index = 
+_getNavigationFromDB($sectionTitlesArray, $selectionMode, true);
 			foreach ($index as &$section) {
 				foreach($section as &$page) {
-					$page['title'] = rcEmphasisSplit($page['title']);
+					$page['title'] = 
+rcEmphasisSplit($page['title']);
 				}
 			}
-			$html = _menuStyle_SectionTitleReplacedBy($index, '&mdash;', false);
+			$html = 
+_menuStyle_SectionTitleReplacedBy($index, '&mdash;', false);
 		break;
 		case rcSTYLE_NO_SECTIONS_TITLES_DASH_EMSPLIT_ON_MINUS:
 			// format each page title to have emphasis
-			$index = _getNavigationFromDB($sectionTitlesArray, $selectionMode);
+			$index = 
+_getNavigationFromDB($sectionTitlesArray, $selectionMode);
 			foreach ($index as &$section) {
 				foreach($section as &$page) {
-					$page['title'] = rcEmphasisSplit($page['title']);
+					$page['title'] = 
+rcEmphasisSplit($page['title']);
 				}
 			}
-			$html = _menuStyle_SectionTitleReplacedBy($index, '&mdash;', false);
+			$html = 
+_menuStyle_SectionTitleReplacedBy($index, '&mdash;', false);
 		break;
 		case rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT:
-			$html = _menuStyle_SectionTitleReplacedBy(_getNavigationFromDB($sectionTitlesArray, $selectionMode), '&mdash;', false);
+			$html = 
+_menuStyle_SectionTitleReplacedBy(_getNavigationFromDB($sectionTitlesArray, 
+$selectionMode), '&mdash;', false);
 		break;
 		case rcSTYLE_INVISIBLE_TITLES:
-			$html = _menuStyle_SectionTitleReplacedBy(_getNavigationFromDB($sectionTitlesArray, $selectionMode), '');
+			$html = 
+_menuStyle_SectionTitleReplacedBy(_getNavigationFromDB($sectionTitlesArray, 
+$selectionMode), '');
 		break;
 		case rcSTYLE_INDEXHIBIT_SECTIONAL:
-			$html = _menuStyle_Indexhibit_Sectional(_getNavigationFromDB($sectionTitlesArray, $selectionMode));
+			$html = 
+_menuStyle_Indexhibit_Sectional(_getNavigationFromDB($sectionTitlesArray, 
+$selectionMode));
 		break;
 		case rcSTYLE_NO_MENU:
 			$html = "";
@@ -95,7 +111,8 @@ function rcPageIndex($style = rcSTYLE_NO_SECTIONS_TITLES_DASH_SPLIT, $sectionTit
 /** 
 * Adds noscriptcontent 
 * Usage: <plug:rcCSSIncludes />
-* @note css files can be added to plug using rcCSSIncludes_Add() helper function
+* @note css files can be added to plug using rcCSSIncludes_Add() helper 
+function
 */
 function rcNoScript() {
 	// get our instance
@@ -115,7 +132,8 @@ function rcNoScript() {
 /** 
 * Adds links to css files
 * Usage: <plug:rcCSSIncludes />
-* @note css files can be added to plug using rcCSSIncludes_Add() helper function
+* @note css files can be added to plug using rcCSSIncludes_Add() helper 
+function
 */
 function rcCSSIncludes() {
 	// get our instance
@@ -136,7 +154,8 @@ function rcCSSIncludes() {
 /** 
 * Adds links to js files
 * Usage: <plug:rcJSIncludes />
-* @note js files can be added to plug using rcJSIncludes_Add() helper function
+* @note js files can be added to plug using rcJSIncludes_Add() helper 
+function
 */
 function rcJSIncludes() {
 	// get our instance
@@ -175,7 +194,8 @@ function rcJSDocReady() {
 
 /** 
 * Strings HTML tags from a string
-* when used in a template with system template var it can be used below (don't use the closing >)
+* when used in a template with system template var it can be used below 
+(don't use the closing >)
 * <plug:rcStripHTML <%title%>
 * @param 	string 	str 	String to strip
 */
@@ -184,7 +204,8 @@ function rcStripHTML($str) {
 }
 
 /** 
-* Extends <plug:front_exhibit /> for adding more functionality. Like markdown text if enabled
+* Extends <plug:front_exhibit /> for adding more functionality. Like 
+markdown text if enabled
 */
 function rcFront_exhibit() {
 	global $rs, $PARSE;
@@ -195,8 +216,10 @@ function rcFront_exhibit() {
 	// Markdown Parsing
 	if($rs['markdown']) {
 		// emulate the parser to 
-		$content = $PARSE->parser($PARSE->doVariables($content));
-		$content = $PARSE->parser($PARSE->doVariables($content));
+		$content = 
+$PARSE->parser($PARSE->doVariables($content));
+		$content = 
+$PARSE->parser($PARSE->doVariables($content));
 		
 		$content = rcMarkdown($content);
 	}
@@ -217,7 +240,8 @@ function rcFront_exhibit() {
 
 /** 
 * Image
-* @param	string	$title 	create an html img image tag for an image in the exhibit if it's image matches $title
+* @param	string	$title 	create an html img image tag for an 
+image in the exhibit if it's image matches $title
 */
 function image($title) {
 	global $rs;
@@ -237,7 +261,8 @@ function image($title) {
 		
 		$images;
 		foreach($pages as &$image) {
-			$images[$image['media_title']] = $image['media_file'];
+			$images[$image['media_title']] = 
+$image['media_file'];
 		}
 		$OBJ->rcImages = $images;
 	}
@@ -247,7 +272,8 @@ function image($title) {
 		return;
 		
 	// build tag
-	$tag = "<div class='image'><img src='".GIMGS.'/'.$OBJ->rcImages[$title]."' /></div>";
+	$tag = "<div class='image'><img 
+src='".GIMGS.'/'.$OBJ->rcImages[$title]."' /></div>";
 	
 
 	return $tag;;
@@ -255,24 +281,32 @@ function image($title) {
 
 /** 
 * Disables Indexhibit so nothing is shown
-* @param 	string 	shouldDo 	TRUE or YES will disable the page
-* @notes	can be used in an exhibits textarea to disable a website. For example place in the contexts page textarea to disable the website which content changes are happening 
+* @param 	string 	shouldDo 	TRUE or YES will disable the 
+page
+* @notes	can be used in an exhibits textarea to disable a 
+website. For example place in the contexts page textarea to disable the 
+website which content changes are happening 
 */
 function rcDisablePage($shouldDo) {
-	if(strncasecmp ($shouldDo, "t", 1) == 0 || strncasecmp ($shouldDo, "y", 1) == 0) exit;
+	if(strncasecmp ($shouldDo, "t", 1) == 0 || strncasecmp 
+($shouldDo, "y", 1) == 0) exit;
 }
 
 /** 
 * An <span> html element with the hight of a number of lines
 * @param 	int 	numberOfLines 	Number of the span shall span
-* @param 	int 	lineHeight 		Height of each line in pixels
-* @param 	int 	paddingBottom 	Padding at the bottom of the span
+* @param 	int 	lineHeight 		Height of each line in 
+pixels
+* @param 	int 	paddingBottom 	Padding at the bottom of the 
+span
 */
-function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
+function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 
+0) {
 	$spanHeight = $lineHeight * $numberOfLines;
 	$spanHeight += $paddingBottom;
 	
-	return "<span style='height: $spanHeight"."px; width:100%; display:block'> </span>";
+	return "<span style='height: $spanHeight"."px; width:100%; 
+display:block'> </span>";
 }
 
 // @}
@@ -291,13 +325,15 @@ function rcSpacerBox($numberOfLines, $lineHeight = 15, $paddingBottom = 0) {
 *
 * @return	String	HTML
 *
-* @attention requires a plugin.markdown.php file* from http://michelf.com/projects/php-markdown/  
+* @attention requires a plugin.markdown.php file* from 
+http://michelf.com/projects/php-markdown/  
 *			*rename markdown.php to plugin.markdown.php
 *	
 */
 function rcMarkdown($text) {
 	if(!defined('MARKDOWN_VERSION'))  {
-		return "Error: Makrdown plugin failed. Markdown plugin not loaded.";
+		return "Error: Makrdown plugin failed. Markdown plugin 
+not loaded.";
 	}
 	
 	return Markdown($text);
@@ -320,7 +356,8 @@ function rcExhibitMarkdown () {
 /** 
 * Proccesses Markdown Text
 * 
-* @remarks	Use in theme template index.php before <plug:front_exhibit />
+* @remarks	Use in theme template index.php before 
+<plug:front_exhibit />
 *
 *			e.g.
 *			/code
@@ -343,7 +380,8 @@ function rcMarkdownContent() {
 * the split character will be used in the url
 *
 * @param 	string 	text 		text to be split and emphasised
-* @param 	string 	split 		the character to split the text on
+* @param 	string 	split 		the character to split the text 
+on
 */
 
 function rcEmphasisSplit($text, $split = "-") {
@@ -358,7 +396,8 @@ function rcEmphasisSplit($text, $split = "-") {
 
 /**
 *	Display the page title, using rcEmphasisSplit
-*	In theme templates plugin seems to work when passing varibles with commsa
+*	In theme templates plugin seems to work when passing varibles 
+with commsa
 *	@see rcEmphasisSplit
 */
 function rcPageTitleWithEmphasisSplit() {
@@ -369,14 +408,17 @@ function rcPageTitleWithEmphasisSplit() {
 /** 
 * Helper function to add CSS files to the rcCSSIncludes plugin
 *
-* @param 	string 	dir 		Directory to load the css file from e.g. /web/css/
+* @param 	string 	dir 		Directory to load the css file 
+from e.g. /web/css/
 * @param	string	filename	CSS file to load e.g. reset.css
 * @param	string	mediaOrNil	optional CSS media. Screen etc.
 * @param	string	typeOrNil	optional CSS type. text/css etc.
 * 
-* @note this can be used to include difference css files from a exhibit type
+* @note this can be used to include difference css files from a exhibit 
+type
 */
-function rcCSSIncludes_Add($dir, $filename, $mediaOrNil = "", $typeOrNil = "") {
+function rcCSSIncludes_Add($dir, $filename, $mediaOrNil = "", $typeOrNil 
+= "") {
 	// get our instance
 	$OBJ =& get_instance();
 	
@@ -386,16 +428,19 @@ function rcCSSIncludes_Add($dir, $filename, $mediaOrNil = "", $typeOrNil = "") {
 	}
 	// create our include html tag
 	if ($mediaOrNil != "") $mediaOrNil = "media='$mediaOrNil'";
-	$typeOrNil = $typeOrNil == "" ?  "type='text/css'"  : "type='$typeOrNil'";
+	$typeOrNil = $typeOrNil == "" ?  "type='text/css'"  : 
+"type='$typeOrNil'";
 	
-	$cssIncludeString = "<link rel='stylesheet' href='$dir$filename' $mediaOrNil $typeOrNil />";
+	$cssIncludeString = "<link rel='stylesheet' href='$dir$filename' 
+$mediaOrNil $typeOrNil />";
 	
 	array_push($OBJ->rcCSSIncludes, $cssIncludeString);
 }
 
 /** 
 * Helper function to add JS files to the rcJSIncludes plugin
-* @param 	string 	dir 		Directory to load the js file from e.g. /web/js/
+* @param 	string 	dir 		Directory to load the js file 
+from e.g. /web/js/
 * @param	string	filename	JS file to load e.g. reset.js
 */
 function rcJSIncludes_Add($dir, $filename) {
@@ -408,7 +453,8 @@ function rcJSIncludes_Add($dir, $filename) {
 	}
 	// create our include html tag
 
-	$jsIncludeString = "<script type='text/javascript' src='$dir$filename'></script>";
+	$jsIncludeString = "<script type='text/javascript' 
+src='$dir$filename'></script>";
 	
 	array_push($OBJ->rcJSIncludes, $jsIncludeString);
 }
@@ -430,7 +476,8 @@ function rcJSDocReady_Add($js) {
 }
 
 /** 
-* Helper function to add content that will be all contained within a <noscript> tag
+* Helper function to add content that will be all contained within a 
+<noscript> tag
 * @param	string	content			the content to be placed 
 */
 function rcNoScript_Add($content) {
@@ -456,11 +503,15 @@ function rcNoScript_Add($content) {
 
 /** 
 * _menuStyle_SectionTitleReplacedBy
-* @param 			items					array from the db (_getNavigationFromDB)
-* @param 	string 	replacement				Section title will display this string instead of the section title
-* @param 	bool 	firstSelectionTitle 	if False will skip using the first title
+* @param 			items					
+array from the db (_getNavigationFromDB)
+* @param 	string 	replacement				Section 
+title will display this string instead of the section title
+* @param 	bool 	firstSelectionTitle 	if False will skip using 
+the first title
 */
-function _menuStyle_SectionTitleReplacedBy($items, $replacement = "", $firstSelectionTitle = true) {
+function _menuStyle_SectionTitleReplacedBy($items, $replacement = "", 
+$firstSelectionTitle = true) {
 	
 	$firstSelectionTitle = ($firstSelectionTitle == true) ? 1 : 0;
 	
@@ -469,7 +520,8 @@ function _menuStyle_SectionTitleReplacedBy($items, $replacement = "", $firstSele
 	{
 		$s .= "<ul>\n";
 		if ($firstSelectionTitle > 0) {
-			if ($out[0]['disp'] == 1) $s .= "<li class='section-title'>$replacement</li>\n";
+			if ($out[0]['disp'] == 1) $s .= "<li 
+class='section-title'>$replacement</li>\n";
 		}
 		$firstSelectionTitle++;
 		$s = _makePagesIntoMenuListItems($out, $s);
@@ -483,7 +535,8 @@ function _menuStyle_Indexhibit_Sectional($items) {
 	foreach($items as $key => $out)
 	{
 		$s .= "<ul>\n";
-		if ($out[0]['disp'] == 1) $s .= "<li class='section-title'>" . $key . "</li>\n";
+		if ($out[0]['disp'] == 1) $s .= "<li 
+class='section-title'>" . $key . "</li>\n";
 		$s = _makePagesIntoMenuListItems($out, $s);
 		$s .= "</ul>\n\n";
 	}
@@ -491,13 +544,18 @@ function _menuStyle_Indexhibit_Sectional($items) {
 }
 
 function _makePagesIntoMenuListItems($out, $s) {
+	global $rs;
 		foreach($out as $page)
 		{
-			$active = ($rs['id'] == $page['id']) ? " class='active'" : '';
-			if (isset($page['status']) && $page['status'] == 0) 
-				$s .= "<li class='unpublished'>" . $page['title'] . "</li>\n";
+			$active = ($rs['id'] == $page['id']) ? " 
+class='active'" : '';
+			if (isset($page['status']) && $page['status'] == 
+0) 
+				$s .= "<li class='unpublished'>" . 
+$page['title'] . "</li>\n";
 			else
-				$s .= "<li$active><a href='" . BASEURL . ndxz_rewriter($page['url']) . "' >" . $page['title'] . "</a></li>\n";
+				$s .= "<li$active><a href='" . BASEURL . 
+ndxz_rewriter($page['url']) . "' >" . $page['title'] . "</a></li>\n";
 		}
 		
 		return $s;
@@ -506,12 +564,18 @@ function _makePagesIntoMenuListItems($out, $s) {
 /** 
 * _getNavigationFromDB
 * Pulls the navigation out of the DB
-* @param 	bool	showUnpublished			also fetch unpublished results
-* @param	array	$sectionTitlesArray		Optional: Menu titles to be used to either include or exclude selections. 
-*											If "" will ignore everything and include everything as normal. @see rcPageIndex
-* @param	string	$selectionMode			Optional: Either rcINCLUDE or rcEXCLUDE	
+* @param 	bool	showUnpublished			also fetch 
+unpublished results
+* @param	array	$sectionTitlesArray		Optional: Menu 
+titles to be used to either include or exclude selections. 
+*											
+If "" will ignore everything and include everything as normal. @see 
+rcPageIndex
+* @param	string	$selectionMode			Optional: Either 
+rcINCLUDE or rcEXCLUDE	
 */
-function _getNavigationFromDB($sectionTitlesArray = array(), $selectionMode = rcEXCLUDE, $showUnpublished = false) {
+function _getNavigationFromDB($sectionTitlesArray = array(), 
+$selectionMode = rcEXCLUDE, $showUnpublished = false) {
 
 	$OBJ =& get_instance();
 	global $rs;
@@ -532,7 +596,8 @@ function _getNavigationFromDB($sectionTitlesArray = array(), $selectionMode = rc
 	foreach($pages as $reord)
 	{
 		// figure out if we should include or exclude this item
-		$includeItem = ($selectionMode == rcEXCLUDE) ? true : false; 
+		$includeItem = ($selectionMode == rcEXCLUDE) ? true : 
+false; 
 		foreach($sectionTitlesArray as &$title) {
 			if ($reord['sec_desc'] == $title) {
 				$includeItem = !$includeItem;
